@@ -47,11 +47,21 @@ public class EventController {
             try {
                 OrderDTO orderDTO = new OrderDTO(inputView.inputOrders());
                 return orderDTO.orders();
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                handleException(e);
             }
         }
     }
+
+    private void handleException(Exception e) {
+        if (e instanceof IllegalArgumentException) {
+            System.out.println(e.getMessage());
+        }
+        if (e instanceof IllegalStateException) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     private void showPreviewAndOrderList(final int date, final Map<String, Integer> orders) {
         outputView.printPreview(date);
@@ -69,7 +79,7 @@ public class EventController {
     }
 
     private void showEventBadge(int totalDiscount) {
-        String badge = Badge.getBadge(totalDiscount);
+        String badge = EventBadge.create(totalDiscount).getBadge();
         outputView.printBadge(badge);
     }
 }
