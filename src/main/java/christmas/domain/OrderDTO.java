@@ -1,8 +1,6 @@
 package christmas.domain;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public record OrderDTO(
         Map<String, Integer> orders
@@ -21,7 +19,6 @@ public record OrderDTO(
         int totalCount = getTotalCount(orders);
         validateMaxMenuCount(totalCount);
         validateMinMenuCount(totalCount);
-        validateDuplicateOrder(orders);
     }
 
     private void validateMenuNames(Map<String, Integer> orders) {
@@ -61,19 +58,6 @@ public record OrderDTO(
         return orders.values().stream()
                 .mapToInt(Integer::intValue)
                 .sum();
-    }
-
-    private void validateDuplicateOrder(Map<String, Integer> orders) {
-        if (hasDuplicate(orders)) {
-            throw new IllegalArgumentException(String.format(ERROR_FORMAT, INVALID_ORDER));
-        }
-    }
-
-    private boolean hasDuplicate(Map<String, Integer> orders) {
-        Set<String> uniqueStrings = new HashSet<>();
-
-        return orders.keySet().stream()
-                .anyMatch(orderString -> !uniqueStrings.add(orderString));
     }
 
     public static int totalOrderPrice(Map<String, Integer> orders) {
