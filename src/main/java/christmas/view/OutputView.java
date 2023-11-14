@@ -1,12 +1,10 @@
 package christmas.view;
 
-import christmas.domain.Menu;
 import java.text.DecimalFormat;
 import java.util.Map;
 
 public class OutputView {
     private static final String PREVIEW_FORMAT = "12월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!";
-    private static final int DEFAULT_PRESENT_PRICE = 0;
     private static final String PRINT_ORDER_FORMAT = "%s %d개";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,###");
     private static final String TOTAL_DISCOUNT_FORMAT = "크리스마스 디데이 할인: -%s원\n평일 할인: -%s원\n특별 할인: -%s원\n증정 이벤트: -%s원\n\n<총혜택 금액>\n-%s원\n";
@@ -32,30 +30,25 @@ public class OutputView {
         System.out.println(present);
     }
 
-    public int printTotalDiscount(final int dateDiscount, final int dayDiscount, final int specialDiscount,
-                             final String present) {
+    public void printTotalDiscount(final int dateDiscount, final int dayDiscount, final int specialDiscount,
+                             final int presentPrice) {
         System.out.println("\n<혜택 내역>");
-        if (isDiscountExist(dateDiscount, dayDiscount, specialDiscount, present)) {
-            int presentPrice = Menu.findMenuByName(present)
-                    .map(Menu::getMenuPrice)
-                    .orElse(DEFAULT_PRESENT_PRICE);
+        if (isDiscountExist(dateDiscount, dayDiscount, specialDiscount, presentPrice)) {
             int totalDiscountPrice = dateDiscount + dayDiscount + specialDiscount + presentPrice;
             String totalDiscountMessage = String.format(TOTAL_DISCOUNT_FORMAT, MONEY_FORMAT.format(dateDiscount),
                     MONEY_FORMAT.format(dayDiscount), MONEY_FORMAT.format(specialDiscount),
                     MONEY_FORMAT.format(presentPrice), MONEY_FORMAT.format(totalDiscountPrice));
             System.out.println(totalDiscountMessage);
-            return totalDiscountPrice;
         }
-        if (!isDiscountExist(dateDiscount, dayDiscount, specialDiscount, present)) {
+        if (!isDiscountExist(dateDiscount, dayDiscount, specialDiscount, presentPrice)) {
             System.out.println(TOTAL_NO_DISCOUNT_FORMAT);
         }
-        return 0;
     }
 
     private boolean isDiscountExist(final int dateDiscount, final int dayDiscount, final int specialDiscount,
-                                    final String present) {
+                                    final int presentPrice) {
         return isDateDiscount(dateDiscount) || isDayDiscount(dayDiscount) || isSpecialDiscount(specialDiscount)
-                || isPresentDiscount(present);
+                || isPresentDiscount(presentPrice);
     }
 
     private boolean isDateDiscount(final int dateDiscount) {
@@ -70,8 +63,8 @@ public class OutputView {
         return specialDiscount != 0;
     }
 
-    private boolean isPresentDiscount(final String present) {
-        return !present.equals("없음");
+    private boolean isPresentDiscount(final int presentPrice) {
+        return presentPrice != 0;
     }
 
     public void printAfterDiscount(final int totalOrderPrice, final int totalDiscount, final int presentPrice) {
