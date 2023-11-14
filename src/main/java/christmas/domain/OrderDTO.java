@@ -75,4 +75,12 @@ public record OrderDTO(
         return orders.keySet().stream()
                 .anyMatch(orderString -> !uniqueStrings.add(orderString));
     }
+
+    public static int totalOrderPrice(Map<String, Integer> orders) {
+        return orders.entrySet().stream()
+                .mapToInt(entry -> Menu.findMenuByName(entry.getKey())
+                        .map(menu -> menu.getMenuPrice() * entry.getValue())
+                        .orElse(0))
+                .sum();
+    }
 }
