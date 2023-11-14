@@ -1,18 +1,16 @@
 package christmas.controller;
 
-import christmas.InputValidator;
 import christmas.domain.Badge;
+import christmas.domain.DateDTO;
 import christmas.domain.DateDiscount;
 import christmas.domain.DayDiscount;
 import christmas.domain.Menu;
+import christmas.domain.OrderDTO;
 import christmas.domain.PresentEvent;
 import christmas.domain.SpecialDiscount;
 import christmas.view.InputView;
 import christmas.view.OutputView;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class EventController {
     private final InputView inputView;
@@ -36,9 +34,8 @@ public class EventController {
     private int getVisitDate() {
         while (true) {
             try {
-                int date = inputView.inputVisitDate();
-                InputValidator.validateDate(date);
-                return date;
+                DateDTO dateDTO = new DateDTO(inputView.inputVisitDate());
+                return dateDTO.date();
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
@@ -48,28 +45,12 @@ public class EventController {
     private Map<String, Integer> getInputOrders() {
         while (true) {
             try {
-                Map<String, Integer> orders = inputView.inputOrders();
-                InputValidator.validateMenuNames(orders);
-                Set<String> categories = getCategoriesFromOrders(orders);
-                InputValidator.validateOnlyJuice(categories);
-                int orderCount = orders.values().stream()
-                        .mapToInt(Integer::intValue)
-                        .sum();
-                InputValidator.validateMaxMenuCount(orderCount);
-                InputValidator.validateOrder(orders);
-                return orders;
+                OrderDTO orderDTO = new OrderDTO(inputView.inputOrders());
+                return orderDTO.orders();
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
-    }
-
-    private Set<String> getCategoriesFromOrders(Map<String, Integer> orders) {
-        return orders.keySet().stream()
-                .map(menuName -> Menu.findMenuByName(menuName.toUpperCase()))
-                .flatMap(Optional::stream)  // Optional을 평면화하여 처리
-                .map(Menu::getCategory)
-                .collect(Collectors.toSet());
     }
 
     private void showPreviewAndOrderList(final int date, final Map<String, Integer> orders) {
