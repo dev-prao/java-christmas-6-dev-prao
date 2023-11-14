@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public record OrderDTO(Map<String, Integer> orders) {
+public record OrderDTO(
+        Map<String, Integer> orders
+) {
     private static final String ERROR_FORMAT = "[ERROR] %s";
     private static final String CANNOT_ORDER_ONLY_JUICE = "음료만 주문할 수 없습니다.";
     private static final String INVALID_MAX_COUNT_FORMAT = "메뉴는 한 번에 최대 %d개까지만 주문할 수 있습니다.";
@@ -14,26 +16,26 @@ public record OrderDTO(Map<String, Integer> orders) {
     private static final String INVALID_ORDER = "유효하지 않은 주문입니다. 다시 입력해 주세요.";
 
     public OrderDTO {
-        validateMenuNames();
-        validateOnlyJuice();
-        int totalCount = getTotalCount();
+        validateMenuNames(orders);
+        validateOnlyJuice(orders);
+        int totalCount = getTotalCount(orders);
         validateMaxMenuCount(totalCount);
         validateMinMenuCount(totalCount);
-        validateDuplicateOrder();
+        validateDuplicateOrder(orders);
     }
 
-    private void validateMenuNames() {
-        if (!isMenuNamesPresent()) {
+    private void validateMenuNames(Map<String, Integer> orders) {
+        if (!isMenuNamesPresent(orders)) {
             throw new IllegalArgumentException(String.format(ERROR_FORMAT, INVALID_ORDER));
         }
     }
 
-    private boolean isMenuNamesPresent() {
+    private boolean isMenuNamesPresent(Map<String, Integer> orders) {
         return orders.keySet().stream()
                 .anyMatch(menuName -> Menu.findMenuByName(menuName.toUpperCase()).isPresent());
     }
 
-    private void validateOnlyJuice() {
+    private void validateOnlyJuice(Map<String, Integer> orders) {
         if (orders.keySet().stream()
                 .map(Menu::findMenuByName)
                 .allMatch(menu -> menu.map(value -> "음료".equals(value.getCategory())).orElse(false))) {
@@ -55,19 +57,19 @@ public record OrderDTO(Map<String, Integer> orders) {
         }
     }
 
-    private int getTotalCount() {
+    private int getTotalCount(Map<String, Integer> orders) {
         return orders.values().stream()
                 .mapToInt(Integer::intValue)
                 .sum();
     }
 
-    private void validateDuplicateOrder() {
-        if (hasDuplicate()) {
+    private void validateDuplicateOrder(Map<String, Integer> orders) {
+        if (hasDuplicate(orders)) {
             throw new IllegalArgumentException(String.format(ERROR_FORMAT, INVALID_ORDER));
         }
     }
 
-    private boolean hasDuplicate() {
+    private boolean hasDuplicate(Map<String, Integer> orders) {
         Set<String> uniqueStrings = new HashSet<>();
 
         return orders.keySet().stream()
