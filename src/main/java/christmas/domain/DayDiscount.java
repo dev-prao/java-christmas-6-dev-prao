@@ -3,6 +3,7 @@ package christmas.domain;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 public class DayDiscount {
     private static final int FRIDAY = 1;
@@ -24,8 +25,8 @@ public class DayDiscount {
     private static int weekendDiscount(Map<String, Integer> orders) {
         return orders.entrySet().stream()
                 .filter(entry -> {
-                    Menu menu = Menu.findMenuByName(entry.getKey());
-                    return menu != null && Objects.equals(menu.getCategory(), "메인");
+                    Optional<Menu> optionalMenu = Menu.findMenuByName(entry.getKey());
+                    return optionalMenu.isPresent() && Objects.equals(optionalMenu.get().getCategory(), "메인");
                 })
                 .mapToInt(Entry::getValue)
                 .sum() * DISCOUNT_PER_DAY;
@@ -34,8 +35,8 @@ public class DayDiscount {
     private static int weekdayDiscount(Map<String, Integer> orders) {
         return orders.entrySet().stream()
                 .filter(entry -> {
-                    Menu menu = Menu.findMenuByName(entry.getKey());
-                    return menu != null && Objects.equals(menu.getCategory(), "디저트");
+                    Optional<Menu> optionalMenu = Menu.findMenuByName(entry.getKey());
+                    return optionalMenu.isPresent() && Objects.equals(optionalMenu.get().getCategory(), "디저트");
                 })
                 .mapToInt(Entry::getValue)
                 .sum() * DISCOUNT_PER_DAY;

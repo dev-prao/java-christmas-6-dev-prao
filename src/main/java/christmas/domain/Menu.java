@@ -1,6 +1,7 @@
 package christmas.domain;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum Menu {
     양송이수프("에피타이저", 6_000),
@@ -27,11 +28,10 @@ public enum Menu {
         this.menuPrice = menuPrice;
     }
 
-    public static Menu findMenuByName(String menuName) {
+    public static Optional<Menu> findMenuByName(String menuName) {
         return Arrays.stream(Menu.values())
                 .filter(menu -> menu.name().equalsIgnoreCase(menuName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 메뉴를 찾을 수 없습니다."));
+                .findFirst();
     }
 
     public String getCategory() {

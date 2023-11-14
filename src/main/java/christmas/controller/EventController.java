@@ -10,7 +10,7 @@ import christmas.domain.SpecialDiscount;
 import christmas.view.InputView;
 import christmas.view.OutputView;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,10 +64,10 @@ public class EventController {
         }
     }
 
-    private  Set<String> getCategoriesFromOrders(Map<String, Integer> orders) {
+    private Set<String> getCategoriesFromOrders(Map<String, Integer> orders) {
         return orders.keySet().stream()
-                .map(Menu::findMenuByName)
-                .filter(Objects::nonNull)
+                .map(menuName -> Menu.findMenuByName(menuName.toUpperCase()))
+                .flatMap(Optional::stream)  // Optional을 평면화하여 처리
                 .map(Menu::getCategory)
                 .collect(Collectors.toSet());
     }
@@ -83,14 +83,11 @@ public class EventController {
         for (Map.Entry<String, Integer> entry : orders.entrySet()) {
             String stringName = entry.getKey();
             int quantity = entry.getValue();
-
-            Menu menu = Menu.findMenuByName(stringName);
-            if (menu != null) {
-                int menuPrice = menu.getMenuPrice();
-                totalOrderPrice += menuPrice * quantity;
-            }
+            int menuPrice = Menu.findMenuByName(stringName)
+                    .map(Menu::getMenuPrice)
+                    .orElse(0);
+            totalOrderPrice += menuPrice * quantity;
         }
-
         return totalOrderPrice;
     }
 
@@ -112,10 +109,9 @@ public class EventController {
         int dayDiscount = getDayDiscount(date, orders);
         int specialDiscount = getSpecialDiscount(date);
         String present = getPresent(totalOrderPrice);
-        int presentPrice = 0;
-        if (!present.equals("없음")) {
-            presentPrice = Menu.findMenuByName(present).getMenuPrice();
-        }
+        int presentPrice = Menu.findMenuByName(present)
+                .map(Menu::getMenuPrice)
+                .orElse(0);
         int totalDiscount = outputView.printTotalDiscount(dateDiscount, dayDiscount, specialDiscount, present);
         outputView.printAfterDiscount(totalOrderPrice, totalDiscount, presentPrice);
         String badge = getEventBadge(totalDiscount);
