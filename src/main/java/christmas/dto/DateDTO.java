@@ -1,4 +1,4 @@
-package christmas.domain;
+package christmas.dto;
 
 public record DateDTO(
         int date

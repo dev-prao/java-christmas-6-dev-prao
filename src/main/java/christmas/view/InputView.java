@@ -1,7 +1,7 @@
 package christmas.view;
 
 import camp.nextstep.edu.missionutils.Console;
-import christmas.Parser;
+import christmas.parser.Parser;
 import java.util.Map;
 
 public class InputView {

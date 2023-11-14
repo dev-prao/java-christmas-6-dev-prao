@@ -1,4 +1,4 @@
-package christmas;
+package christmas.parser;
 
 import java.util.Arrays;
 import java.util.Collections;

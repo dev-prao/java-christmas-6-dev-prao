@@ -1,5 +1,10 @@
-package christmas.domain;
+package christmas.dto;
 
+import christmas.domain.DateDiscount;
+import christmas.domain.DayDiscount;
+import christmas.domain.Menu;
+import christmas.domain.PresentEvent;
+import christmas.domain.SpecialDiscount;
 import java.util.Map;
 
 public record DiscountDTO(

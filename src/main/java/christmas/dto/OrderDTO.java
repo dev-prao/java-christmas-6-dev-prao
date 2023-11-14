@@ -1,5 +1,6 @@
-package christmas.domain;
+package christmas.dto;
 
+import christmas.domain.Menu;
 import java.util.Map;
 
 public record OrderDTO(
