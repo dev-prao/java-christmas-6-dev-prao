@@ -8,17 +8,19 @@ import java.util.stream.Collectors;
 
 public class Parser {
     private static final Pattern pattern = Pattern.compile("([가-힣a-zA-Z0-9]+)-(\\d+)");
+    private static final String ERROR_FORMAT = "[ERROR] %s";
+    private static final String EMPTY = "값이 비어있습니다. 다시 입력해주세요.";
 
     private Parser() {
     }
 
     public static int parseDate(final String input) {
-        InputValidator.validateEmpty(input);
+        validateEmpty(input);
         return Integer.parseInt(input);
     }
 
     public static Map<String, Integer> parseOrder(final String input) {
-        InputValidator.validateEmpty(input);
+        validateEmpty(input);
 
         return Arrays.stream(input.split(","))
                 .map(String::trim)
@@ -30,5 +32,9 @@ public class Parser {
                 ));
     }
 
-
+    public static void validateEmpty(final String input) {
+        if (input.isEmpty()) {
+            throw new IllegalArgumentException(String.format(ERROR_FORMAT, EMPTY));
+        }
+    }
 }
