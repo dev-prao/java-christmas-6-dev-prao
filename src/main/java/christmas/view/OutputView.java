@@ -22,7 +22,7 @@ public class OutputView {
 
     public void printTotalOrderPrice(final int totalOrderPrice) {
         System.out.println("\n<할인 전 총주문 금액>");
-        System.out.println(totalOrderPrice);
+        System.out.println((MONEY_FORMAT.format(totalOrderPrice)) + "원");
     }
 
     public void printPresent(final String present) {
